@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de Missão Espacial</title>
+
+    <style>
+
+        body {
+            background-color: #050816;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #111827;
+            padding: 30px;
+            border-radius: 15px;
+            width: 420px;
+            box-shadow: 0px 0px 20px #00bfff;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00bfff;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #00bfff;
+            margin-top: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #1f2937;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: 2px solid #00bfff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #0077ff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0099ff;
+        }
+
+        #resultado,
+        #historico {
+            background-color: #1f2937;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .alerta {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .normal {
+            color: #4dff88;
+            font-weight: bold;
+        }
+
+        .info {
+            color: #d1d5db;
+        }
+
+        hr {
+            border: 1px solid #374151;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Monitoramento de Missão Espacial</h1>
+
+        <input type="number"
+               id="temperatura"
+               placeholder="Digite a temperatura">
+
+        <input type="number"
+               id="energia"
+               placeholder="Digite o nível de energia">
+
+        <input type="number"
+               id="comunicacao"
+               placeholder="Digite o status da comunicação">
+
+        <button onclick="enviarDados()">
+            Simular Missão
+        </button>
+
+        <button onclick="mostrarHistorico()">
+            Mostrar Histórico
+        </button>
+
+        <h2>Resultado</h2>
+
+        <div id="resultado">
+            Aguardando análise...
+        </div>
+
+        <h2>Histórico</h2>
+
+        <div id="historico">
+            Nenhuma simulação realizada.
+        </div>
+
+    </div>
+
+    <script>
+
+        // VETOR DE HISTÓRICO
+
+        var historico = [];
+
+        // FUNÇÃO PRINCIPAL
+
+        function enviarDados() {
+
+            var temperatura =
+                Number(document.getElementById("temperatura").value);
+
+            var energia =
+                Number(document.getElementById("energia").value);
+
+            var comunicacao =
+                Number(document.getElementById("comunicacao").value);
+
+            var mensagem = "";
+
+            var status = "";
+
+            // VALIDAÇÃO
+
+            if (
+                document.getElementById("temperatura").value === "" ||
+                document.getElementById("energia").value === "" ||
+                document.getElementById("comunicacao").value === ""
+            ) {
+
+                alert("Preencha todos os campos!");
+
+                return;
+            }
+
+            // INFORMAÇÕES DA LEITURA
+
+            mensagem +=
+                "<p class='info'>Temperatura: "
+                + temperatura +
+                "°C</p>";
+
+            mensagem +=
+                "<p class='info'>Energia: "
+                + energia +
+                "%</p>";
+
+            mensagem +=
+                "<p class='info'>Comunicação: "
+                + comunicacao +
+                "</p>";
+
+            mensagem += "<hr>";
+
+            // VERIFICAÇÕES
+
+            mensagem += verificarTemperatura(temperatura);
+
+            mensagem += verificarEnergia(energia);
+
+            mensagem += verificarComunicacao(comunicacao);
+
+            // STATUS GERAL
+
+            if (
+                temperatura > 80 ||
+                energia < 20 ||
+                comunicacao == 0
+            ) {
+
+                status =
+                    "<p class='alerta'>MISSÃO EM RISCO</p>";
+
+            } else {
+
+                status =
+                    "<p class='normal'>MISSÃO OPERANDO NORMALMENTE</p>";
+            }
+
+            mensagem += "<hr>" + status;
+
+            // RESULTADO MOSTRA APENAS STATUS
+
+            document.getElementById("resultado").innerHTML =
+                status;
+
+            // SALVAR NO HISTÓRICO
+
+            historico.push(mensagem);
+        }
+
+        // FUNÇÃO TEMPERATURA
+
+        function verificarTemperatura(temperatura) {
+
+            if (temperatura > 80) {
+
+                return "<p class='alerta'>Alerta: Superaquecimento detectado!</p>";
+
+            } else {
+
+                return "<p class='normal'>Temperatura dentro dos limites.</p>";
+            }
+        }
+
+        // FUNÇÃO ENERGIA
+
+        function verificarEnergia(energia) {
+
+            if (energia < 20) {
+
+                return "<p class='alerta'>Nível de energia crítico!</p>";
+
+            } else {
+
+                return "<p class='normal'>Energia adequada.</p>";
+            }
+        }
+
+        // FUNÇÃO COMUNICAÇÃO
+
+        function verificarComunicacao(comunicacao) {
+
+            if (comunicacao == 0) {
+
+                return "<p class='alerta'>Falha de comunicação!</p>";
+
+            } else {
+
+                return "<p class='normal'>Comunicação estável.</p>";
+            }
+        }
+
+        // MOSTRAR HISTÓRICO
+
+        function mostrarHistorico() {
+
+            if (historico.length == 0) {
+
+                document.getElementById("historico").innerHTML =
+                    "Nenhuma simulação realizada.";
+
+                return;
+            }
+
+            var resultadoHistorico = "";
+
+            for (var i = 0; i < historico.length; i++) {
+
+                resultadoHistorico +=
+                    historico[i] + "<hr>";
+            }
+
+            document.getElementById("historico").innerHTML =
+                resultadoHistorico;
+        }
+
+    </script>
+
+</body>
+
+</html>
